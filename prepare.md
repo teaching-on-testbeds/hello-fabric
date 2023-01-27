@@ -1,3 +1,5 @@
+# Hello, FABRIC
+
 In this tutorial, you will learn how to use FABRIC to run experiments in computer networks or cloud computing. It should take you about 60-90 minutes of *active* time to work through this tutorial.
 
 > **Note**
@@ -23,19 +25,19 @@ On the following page, use the drop-down menu in the "Select an Identity Provide
 
 Once you have made your selection, click "Log On". You will be directed to log in using your university credentials. Then, you'll be prompted to begin setting up your FABRIC account:
 
-![Start setting up your FABRIC account.](fabric-step-1.png)
+![Start setting up your FABRIC account.](images/fabric-step-1.png)
 
 Click "Begin" to continue. Next, you will be prompted to select/confirm your institution, and then you will have the opportunity to confirm or modify your personal information (name, etc.). Click "Submit" when you are ready to continue.
 
 Within 10-15 minutes, you will receive an email in order to confirm your email address. The email will include a link (redacted in this screenshot):
 
-![Click on the link (redacted in this screenshot) to confirm your email.](fabric-confirm-email.png)
+![Click on the link (redacted in this screenshot) to confirm your email.](images/fabric-confirm-email.png)
 
 Click on the link to continue setting up your account. (This email is automated, so if you don't see it in your inbox or spam folder, you may not have completed your account submission.) 
 
 To continue, you'll need to click "Accept":
 
-!["Accept" to continue setting up your account.](fabric-accept.png)
+!["Accept" to continue setting up your account.](images/fabric-accept.png)
 
 ### Exercise - Join a project
 

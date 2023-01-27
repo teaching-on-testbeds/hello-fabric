@@ -1,6 +1,4 @@
----
-title: Hello, FABRIC
----
+# Hello, FABRIC
 
 In this tutorial, you will learn how to use FABRIC to run experiments in computer networks or cloud computing. It should take you about 60-90 minutes of *active* time to work through this tutorial.
 
@@ -24,19 +22,19 @@ On the following page, use the drop-down menu in the "Select an Identity Provide
 
 Once you have made your selection, click "Log On". You will be directed to log in using your university credentials. Then, you'll be prompted to begin setting up your FABRIC account:
 
-![Start setting up your FABRIC account.](fabric-step-1.png)
+![Start setting up your FABRIC account.](images/fabric-step-1.png)
 
 Click "Begin" to continue. Next, you will be prompted to select/confirm your institution, and then you will have the opportunity to confirm or modify your personal information (name, etc.). Click "Submit" when you are ready to continue.
 
 Within 10-15 minutes, you will receive an email in order to confirm your email address. The email will include a link (redacted in this screenshot):
 
-![Click on the link (redacted in this screenshot) to confirm your email.](fabric-confirm-email.png)
+![Click on the link (redacted in this screenshot) to confirm your email.](images/fabric-confirm-email.png)
 
 Click on the link to continue setting up your account. (This email is automated, so if you don't see it in your inbox or spam folder, you may not have completed your account submission.)
 
 To continue, you'll need to click "Accept":
 
-!["Accept" to continue setting up your account.](fabric-accept.png)
+!["Accept" to continue setting up your account.](images/fabric-accept.png)
 
 ### Exercise - Join a project
 
@@ -65,17 +63,17 @@ To access resources in our FABRIC experiments, we will use a "bastion key" to au
 
 First, we will use the FABRIC Portal to generate the bastion key. In the [FABRIC Portal](https://portal.fabric-testbed.net/), log in and then click on "User Profile" in the menu bar at the top. Then, click "My SSH Keys" and "Manage SSH Keys".
 
-![](fabric-manage-ssh-keys.png)
+![](images/fabric-manage-ssh-keys.png)
 
 Scroll down to the "Generate SSH Key Pair" section. Set the "Name" to `fabric_bastion_key` and the "Key Type" to **bastion**, exactly as shown here. You can write anything you want in the "Description" field.
 
-![](fabric-gen-bastion.png)
+![](images/fabric-gen-bastion.png)
 
 Then, click "Generate Key Pair".
 
 A small pop-up will show the following message:
 
-![](fabric-key-popup.png)
+![](images/fabric-key-popup.png)
 
 Click on the "Download" button next to "Private Key" and click on the "Download" button next to "Public Key" to download *both* parts of your new SSH key pair.
 
@@ -83,11 +81,11 @@ Find the two files, "fabric_bastion_key" and "fabric_bastion_key.pub" in your br
 
 Now, switch back to your Jupyter environment. In the sidebar on the left side of this environment is a file browser. You will see a directory named `fabric_config` there - double-click on it to navigate to this directory.
 
-![](jup-fabconfig-dir.png)
+![](images/jup-fabconfig-dir.png)
 
 You will see that the part of the interface that shows your current position in the filesystem (highlighted in blue in the image below) changes to reflect that you are inside the `fabric_config` directory. Then, click on the upload button (highlighted in green).
 
-![](jup-upload-keys.png)
+![](images/jup-upload-keys.png)
 
 Upload the two files, "fabric_bastion_key" and "fabric_bastion_key.pub", to this directory in the Jupyter environment.
 
@@ -95,11 +93,11 @@ You're almost ready to finish configuring your Jupyter environment now! But firs
 
 **Your bastion username**: In the FABRIC Portal, click on "User Profile" and then "My SSH Keys". Find the "Bastion login" (shown highlighted in the image below) and make a note of it - you can click on the small icon right next to it to copy it, then paste it somewhere else.
 
-![](fabric-bastion-username.png)
+![](images/fabric-bastion-username.png)
 
 **Your project ID**: In the FABRIC Portal, click on "User Profile" and then "My Roles and Projects". Scroll down and find the "Project ID", then copy it.
 
-![](fab-project-id.png)
+![](images/fab-project-id.png)
 
 Now you are ready! In the following cell, fill in your bastion username and project ID:
 
