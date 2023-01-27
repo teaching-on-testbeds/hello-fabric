@@ -1,17 +1,18 @@
-all: index.html hello_fabric.ipynb
+all: index.md hello_fabric.ipynb
 
 clean:
-	rm index.html hello_fabric.ipynb
+	rm index.md hello_fabric.ipynb
 
-index.html: index.md notebooks/*.md
-	pandoc --self-contained  --resource-path=images/  \
-		-i index.md notebooks/configure_jupyter.md \
+index.md: prepare.md notebooks/*.md
+	pandoc --resource-path=images/ --embed-resources --standalone --wrap=none \
+		-i prepare.md notebooks/configure_jupyter.md \
 		notebooks/reserve.md notebooks/configure.md notebooks/login.md \
-		--metadata title="Hello, FABRIC" -o index.html
-
+		--metadata title="Hello, FABRIC" -o index.md.tmp
+	grep -v '^:::' index.md.tmp > index.md
+	rm index.md.tmp
 
 hello_fabric.ipynb: notebooks/*.md
-	pandoc --resource-path=images/ --self-contained --wrap=none \
+	pandoc --resource-path=images/ --embed-resources --standalone --wrap=none \
 		-i notebooks/title.md notebooks/configure_jupyter.md \
 		notebooks/reserve.md notebooks/configure.md notebooks/login.md \
 		-o hello_fabric.ipynb
