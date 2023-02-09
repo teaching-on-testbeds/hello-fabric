@@ -59,7 +59,7 @@ In the Jupyter environment, select File > New > Terminal and in this terminal, r
 git clone https://github.com/teaching-on-testbeds/hello-fabric
 ```
 
-Then, in the file browser on the left side, open the `hello-fabric/notebooks/hello_fabric.ipynb` notebook. Double-click on this notebook to open it.
+Then, in the file browser on the left side, open the `hello-fabric` directory and then double-click on the `hello_fabric.ipynb` notebook to open it.
 
 If you are prompted about a choice of kernel, you can accept the Python3 kernel.
 
