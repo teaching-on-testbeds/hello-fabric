@@ -28,15 +28,6 @@ slice = fablib.get_slice(name=slice_name)
 :::
 -->
 
-
-::: {.cell .code}
-```python
-slice.show()
-```
-:::
-
-
-
 ::: {.cell .code}
 ```python
 slice.delete()

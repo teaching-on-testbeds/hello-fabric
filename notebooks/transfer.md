@@ -37,7 +37,13 @@ slice.get_node("romeo").download_file("/home/fabric/work/ping.txt", "/home/ubunt
 
 ::: {.cell .markdown}
 
-You should see the `ping.txt` file appear in the Jupyter file browser on the left. You can now download this file from the Jupyter environment to your own laptop.
+In the Jupyter environment, click on the folder icon in the file browser on the left to make sure that you are located in your "Jupyter home" directory. 
+
+![](images/jup-fab-home-dir.png)
+
+
+
+Then, you should see the `ping.txt` file appear in the Jupyter file browser on the left. You can now download this file from the Jupyter environment to your own laptop.
 
 :::
 

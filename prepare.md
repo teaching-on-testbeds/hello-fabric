@@ -44,3 +44,23 @@ To continue, you'll need to click "Accept":
 At this stage, you have an account on FABRIC, but your account is not yet a part of any project. To use FABRIC, you need to be a part of a project that has been approved by the FABRIC staff, under the supervision of a project lead who supervises your use of FABRIC.
 
 If you click on the "Projects" tab in the FABRIC portal dashboard (while logged in to your FABRIC account), you'll see a list of projects that you belong to. For now, you won't be part of any project! You will need to let your instructor or research advisor know that you have created your FABRIC account, and tell them the email address associated with your FABRIC account. Once they have added you to their project, you'll see it listed on that page, and you can continue with the next step.
+
+### Exercise - Open this notebook in Jupyter
+
+Once you are part of a FABRIC project, you can reserve resources on FABRIC and access them over SSH! We'll use FABRIC's Jupyter environment for this.
+
+Log on to the [FABRIC Portal](https://portal.fabric-testbed.net/), then click on the "JupyterHub" menu option. You may be prompted to log in again.
+
+To continue working on this tutorial, you'll want to get the rest in "notebook" form.
+
+In the Jupyter environment, select File > New > Terminal and in this terminal, run
+
+```
+git clone https://github.com/teaching-on-testbeds/hello-fabric
+```
+
+Then, in the file browser on the left side, open the `hello-fabric/notebooks/hello_fabric.ipynb` notebook. Double-click on this notebook to open it.
+
+If you are prompted about a choice of kernel, you can accept the Python3 kernel.
+
+Then, you can continue this tutorial by executing the cells in the notebook directly in this Jupyter environment.
