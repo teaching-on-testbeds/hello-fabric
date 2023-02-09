@@ -99,7 +99,91 @@ You're almost ready to finish configuring your Jupyter environment now! But firs
 
 ![](images/fab-project-id.png)
 
-Now you are ready! In the following cell, fill in your bastion username and project ID:
+Now you are ready! In the following cell, fill in your bastion username and project ID instead of the `...`:
+
+``` python
+%%bash
+export FABRIC_BASTION_USERNAME=...
+export FABRIC_PROJECT_ID=...
+```
+
+We'll keep all of our FABRIC configuration files at the default locations, specified in the next cell:
+
+``` python
+%%bash
+export FABRIC_BASTION_PRIVATE_KEY_LOCATION=${HOME}/work/fabric_config/fabric_bastion_key
+export FABRIC_BASTION_SSH_CONFIG_FILE=${HOME}'/work/fabric_config/ssh_config'
+export FABRIC_RC_FILE=${HOME}'/work/fabric_config/fabric_rc'
+export FABRIC_TOKEN_FILE=${HOME}'/.tokens.json'
+export FABRIC_SLICE_PRIVATE_KEY_FILE=${HOME}/work/fabric_config/slice_key
+export FABRIC_SLICE_PUBLIC_KEY_FILE=${FABRIC_SLICE_PRIVATE_KEY_FILE}.pub
+```
+
+Now, we'll generate a new "slice key" pair. (This is used on the "hop" from the bastion, to our FABRIC resources.)
+
+``` python
+%%bash
+ssh-keygen -t rsa -b 3072 -f $FABRIC_SLICE_PRIVATE_KEY_FILE -q -N ""
+```
+
+and we'll make sure the file permissions are set correctly on both private keys:
+
+``` python
+%%bash
+chmod 600 ${FABRIC_BASTION_PRIVATE_KEY_LOCATION}
+chmod 600 ${FABRIC_SLICE_PRIVATE_KEY_FILE}
+```
+
+The following cell creates the `fabric_rc` configuration file using the values specified above. In the future, when we use FABRIC, we will load our configuration from this file.
+
+``` python
+%%bash
+cat <<EOF > ${FABRIC_RC_FILE}
+export FABRIC_CREDMGR_HOST=cm.fabric-testbed.net
+export FABRIC_ORCHESTRATOR_HOST=orchestrator.fabric-testbed.net
+
+export FABRIC_PROJECT_ID=${FABRIC_PROJECT_ID}
+export FABRIC_TOKEN_LOCATION=${FABRIC_TOKEN_FILE}
+
+export FABRIC_BASTION_HOST=bastion.fabric-testbed.net
+export FABRIC_BASTION_USERNAME=${FABRIC_BASTION_USERNAME}
+
+export FABRIC_BASTION_KEY_LOCATION=${FABRIC_BASTION_PRIVATE_KEY_LOCATION}
+#export FABRIC_BASTION_KEY_PASSPHRASE=
+
+export FABRIC_SLICE_PRIVATE_KEY_FILE=${FABRIC_SLICE_PRIVATE_KEY_FILE}
+export FABRIC_SLICE_PUBLIC_KEY_FILE=${FABRIC_SLICE_PUBLIC_KEY_FILE} 
+#export FABRIC_SLICE_PRIVATE_KEY_PASSPHRASE=
+
+export FABRIC_LOG_FILE=${HOME}/fablib.log
+export FABRIC_LOG_LEVEL=INFO 
+
+export FABRIC_AVOID=''
+
+export FABRIC_SSH_COMMAND_LINE="ssh -i {{ _self_.private_ssh_key_file }} -F ${HOME}/work/fabric_config/ssh_config {{ _self_.username }}@{{ _self_.management_ip }}"
+EOF
+```
+
+Finally, we also create an SSH configuration file, which we'll use in the future to access our FABRIC resources using SSH.
+
+``` python
+%%bash
+cat <<EOF > ${FABRIC_BASTION_SSH_CONFIG_FILE}
+UserKnownHostsFile /dev/null
+StrictHostKeyChecking no
+ServerAliveInterval 120 
+
+Host bastion.fabric-testbed.net
+     User ${FABRIC_BASTION_USERNAME}
+     ForwardAgent yes
+     Hostname %h
+     IdentityFile ${FABRIC_BASTION_PRIVATE_KEY_LOCATION}
+     IdentitiesOnly yes
+
+Host * !bastion.fabric-testbed.net
+     ProxyJump ${FABRIC_BASTION_USERNAME}@bastion.fabric-testbed.net:22
+EOF
+```
 
 ### Exercise: reserve resources
 
@@ -137,7 +221,7 @@ Next, we'll select a random FABRIC site for our experiment. We'll make sure to g
 Once we find a suitable site, we'll print details about available resources at this site.
 
 ``` python
-exp_requires = {'core': 6, 'nic': 4}
+exp_requires = {'core': 3*2, 'nic': 4}
 while True:
     site_name = fablib.get_random_site()
     if ( (fablib.resources.get_core_available(site_name) > 1.2*exp_requires['core']) and
@@ -153,7 +237,7 @@ Next, we'll request the hosts and network links that we need at that site! For t
 # this cell sets up the hosts and router
 node_names = ["romeo", "router", "juliet"]
 for n in node_names:
-    slice.add_node(name=n, site=site_name, cores=4, ram=8, disk=10, image='default_ubuntu_20')
+    slice.add_node(name=n, site=site_name, cores=2, ram=4, disk=10, image='default_ubuntu_20')
 ```
 
 ``` python
