@@ -109,9 +109,8 @@ Now you are ready! In the following cell, fill in your bastion username and proj
 
 ::: {.cell .code}
 ```python
-%%bash
-export FABRIC_BASTION_USERNAME=...
-export FABRIC_PROJECT_ID=...
+%env FABRIC_BASTION_USERNAME ...
+%env FABRIC_PROJECT_ID ...
 ```
 :::
 
@@ -122,13 +121,13 @@ We'll keep all of our FABRIC configuration files at the default locations, speci
 
 ::: {.cell .code}
 ```python
-%%bash
-export FABRIC_BASTION_PRIVATE_KEY_LOCATION=${HOME}/work/fabric_config/fabric_bastion_key
-export FABRIC_BASTION_SSH_CONFIG_FILE=${HOME}'/work/fabric_config/ssh_config'
-export FABRIC_RC_FILE=${HOME}'/work/fabric_config/fabric_rc'
-export FABRIC_TOKEN_FILE=${HOME}'/.tokens.json'
-export FABRIC_SLICE_PRIVATE_KEY_FILE=${HOME}/work/fabric_config/slice_key
-export FABRIC_SLICE_PUBLIC_KEY_FILE=${FABRIC_SLICE_PRIVATE_KEY_FILE}.pub
+!mkdir -p /home/fabric/work/fabric_config
+%env FABRIC_BASTION_PRIVATE_KEY_LOCATION /home/fabric/work/fabric_config/fabric_bastion_key
+%env FABRIC_BASTION_SSH_CONFIG_FILE /home/fabric/work/fabric_config/ssh_config
+%env FABRIC_RC_FILE /home/fabric/work/fabric_config/fabric_rc
+%env FABRIC_TOKEN_FILE /home/fabric/.tokens.json
+%env FABRIC_SLICE_PRIVATE_KEY_FILE /home/fabric/work/fabric_config/slice_key
+%env FABRIC_SLICE_PUBLIC_KEY_FILE /home/fabric/work/fabric_config/slice_key.pub
 ```
 :::
 
@@ -141,8 +140,7 @@ Now, we'll generate a new "slice key" pair. (This is used on the "hop" from the 
 
 ::: {.cell .code}
 ```python
-%%bash
-ssh-keygen -t rsa -b 3072 -f $FABRIC_SLICE_PRIVATE_KEY_FILE -q -N ""
+!ssh-keygen -t rsa -b 3072 -f $FABRIC_SLICE_PRIVATE_KEY_FILE -q -N "" <<< y
 ```
 :::
 

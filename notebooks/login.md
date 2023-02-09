@@ -58,9 +58,23 @@ You can repeat this process (open several terminals) to start a session on each 
 Try typing
 
 ```
-echo "Hello world"
+echo "Hello from:"
+hostname
 ```
 
 in the terminal shell *on one of your FABRIC hosts*, and observe the output.
 
+:::
+
+::: {.cell .markdown}
+
+Note that you can also use the FABRIC library to directly execute commands on the FABRIC hosts, like this:
+
+:::
+
+
+::: {.cell .code}
+```python
+slice.get_node("romeo").execute("echo 'Hello from:'; hostname")
+```
 :::
