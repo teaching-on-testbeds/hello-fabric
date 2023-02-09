@@ -187,6 +187,8 @@ EOF
 
 ### Exercise: reserve resources
 
+In this exercise, we will reserve resources on FABRIC: two hosts on two different network segments, connected by a router.
+
 Now that you have configured your Jupyter environment on FABRIC, you can load it from the configuration file at the beginning of each experiment! Check the output of the following cell, and make sure it reflects your configuration (e.g. correct bastion hostname, etc.).
 
 ``` python
@@ -270,7 +272,9 @@ slice.wait_ssh(progress=True)
 
 Next, we need to configure our resources - assign IP addresses to network interfaces, enable forwarding on the router, and install any necessary software.
 
-``` python
+```{=html}
+<!--
+```python
 # read in FABRIC config - in case you pause and pick this up later
 from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manager
 fablib = fablib_manager() 
@@ -283,7 +287,8 @@ slice_name="hello-fabric_" + os.getenv('NB_USER')
 # update information about the slice
 slice = fablib.get_slice(name=slice_name)
 ```
-
+-->
+```
 First, we'll configure IP addresses:
 
 ``` python
@@ -337,7 +342,9 @@ for n in ['romeo', 'router', 'juliet']:
 
 Now, we are finally ready to log in to our resources over SSH! Run the following cells, and observe the table output - you will see an SSH command for each of the nodes in your topology.
 
-``` python
+```{=html}
+<!-- ::: {.cell .code}
+```python
 # read in FABRIC config - in case you pause and pick this up later
 from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manager
 fablib = fablib_manager() 
@@ -350,7 +357,8 @@ slice_name="hello-fabric_" + os.getenv('NB_USER')
 # update information about the slice
 slice = fablib.get_slice(name=slice_name)
 ```
-
+-->
+```
 ``` python
 import pandas as pd
 pd.set_option('display.max_colwidth', None)
@@ -367,3 +375,9 @@ Now, you can open an SSH session on any of the nodes as follows:
 -   copy an SSH command from the table, and paste it into the terminal. (Note that each SSH command is a single line, even if the display wraps the text to a second line! When you copy and paste it, paste it all together.)
 
 You can repeat this process (open several terminals) to start a session on each host and the router. Each terminal session will have a tab in the Jupyter environment, so that you can easily switch between them.
+
+Try typing
+
+    echo "Hello world"
+
+in the terminal shell *on one of your FABRIC hosts*, and observe the output.
