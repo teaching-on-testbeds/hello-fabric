@@ -7,6 +7,7 @@ index.md: prepare.md notebooks/*.md
 	pandoc --resource-path=images/ --wrap=none \
 		-i prepare.md notebooks/configure_jupyter.md \
 		notebooks/reserve.md notebooks/configure.md notebooks/login.md \
+		notebooks/transfer.md notebooks/extend.md notebooks/delete.md \
 		--metadata title="Hello, FABRIC" -o index.tmp.md
 	grep -v '^:::' index.tmp.md > index.md
 	rm index.tmp.md

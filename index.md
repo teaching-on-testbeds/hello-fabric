@@ -288,23 +288,6 @@ slice.wait_ssh(progress=True)
 
 Next, we need to configure our resources - assign IP addresses to network interfaces, enable forwarding on the router, and install any necessary software.
 
-```{=html}
-<!--
-```python
-# read in FABRIC config - in case you pause and pick this up later
-from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manager
-fablib = fablib_manager() 
-!chmod 600 /home/fabric/work/fabric_config/fabric_bastion_key
-!chmod 600 /home/fabric/work/fabric_config/slice_key
-
-import os
-slice_name="hello-fabric_" + os.getenv('NB_USER')
-
-# update information about the slice
-slice = fablib.get_slice(name=slice_name)
-```
--->
-```
 First, we'll configure IP addresses:
 
 ``` python
@@ -358,23 +341,6 @@ for n in ['romeo', 'router', 'juliet']:
 
 Now, we are finally ready to log in to our resources over SSH! Run the following cells, and observe the table output - you will see an SSH command for each of the nodes in your topology.
 
-```{=html}
-<!-- ::: {.cell .code}
-```python
-# read in FABRIC config - in case you pause and pick this up later
-from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manager
-fablib = fablib_manager() 
-!chmod 600 /home/fabric/work/fabric_config/fabric_bastion_key
-!chmod 600 /home/fabric/work/fabric_config/slice_key
-
-import os
-slice_name="hello-fabric_" + os.getenv('NB_USER')
-
-# update information about the slice
-slice = fablib.get_slice(name=slice_name)
-```
--->
-```
 ``` python
 import pandas as pd
 pd.set_option('display.max_colwidth', None)
@@ -403,4 +369,84 @@ Note that you can also use the FABRIC library to directly execute commands on th
 
 ``` python
 slice.get_node("romeo").execute("echo 'Hello from:'; hostname")
+```
+
+### Exercise: Transfer files from a FABRIC host
+
+In future experiments, we'll often want to save the results of an experiment to a file on a FABRIC host, then transfer it to our own laptop for further inspection and analysis. In this exercise, we will learn how to do that!
+
+As described above, open an SSH session to the "romeo" host in your topology. On this host, run the following command:
+
+    ping -c 10 10.0.1.2 | tee ping.txt
+
+This will:
+
+-   send a sequence of "ICMP echo" messages to the "juliet" host, which will trigger a response from "juliet"
+-   save the results - which includes the round trip delay from the time when the request is sent from "romeo", to the time that the response from "juliet" is received - to a file `ping.txt`. (The results will also be displayed in the terminal output.)
+
+Now, in this notebook, run
+
+``` python
+slice.get_node("romeo").download_file("/home/fabric/work/ping.txt", "/home/ubuntu/ping.txt")
+```
+
+In the Jupyter environment, click on the folder icon in the file browser on the left to make sure that you are located in your "Jupyter home" directory.
+
+![](images/jup-fab-home-dir.png)
+
+Then, you should see the `ping.txt` file appear in the Jupyter file browser on the left. You can now download this file from the Jupyter environment to your own laptop.
+
+### Exercise: Extend your slice
+
+By default, your resources will be reserved for you for one day - then, they will be deleted automatically to free them for other users.
+
+If you don't plan to finish an experiment in one day, you can extend your slice. The following cell extends your reservation for 3 days.
+
+``` python
+from datetime import datetime
+from datetime import timezone
+from datetime import timedelta
+
+# Set end date to 3 days from now
+end_date = (datetime.now(timezone.utc) + timedelta(days=3)).strftime("%Y-%m-%d %H:%M:%S %z")
+slice.renew(end_date)
+```
+
+Confirm the new end time of your slice in the output of the following cell:
+
+``` python
+slice.show()
+```
+
+You can extend your slice again anytime before these 3 days have elapsed, if you need more time.
+
+### Exercise: Delete your slice resources
+
+By default, your resources will be reserved for you for one day - then, they will be deleted automatically to free them for other users.
+
+If you finish your experiment early, you can delete your slice! The following cell deletes all the resources in your slice, freeing them for other experimenters.
+
+```{=html}
+<!-- 
+```python
+# read in FABRIC config - in case you pick this up later
+from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manager
+fablib = fablib_manager() 
+!chmod 600 /home/fabric/work/fabric_config/fabric_bastion_key
+!chmod 600 /home/fabric/work/fabric_config/slice_key
+
+import os
+slice_name="hello-fabric_" + os.getenv('NB_USER')
+
+# update information about the slice
+slice = fablib.get_slice(name=slice_name)
+```
+-->
+```
+``` python
+slice.delete()
+```
+
+``` python
+slice.show()
 ```
