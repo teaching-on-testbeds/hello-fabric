@@ -3,7 +3,7 @@ all: index.md hello_fabric.ipynb
 clean:
 	rm index.md hello_fabric.ipynb
 
-index.md: prepare.md notebooks/*.md
+index.md: prepare.md footer.md notebooks/*.md
 	pandoc --resource-path=images/ --wrap=none \
 		-i prepare.md notebooks/configure_jupyter.md \
 		notebooks/reserve.md notebooks/configure.md notebooks/login.md \
