@@ -1,9 +1,9 @@
 ---
 
-<small>Questions about this material? Contact Fraida Fund</small>
+Questions about this material? Contact Fraida Fund
 
 ---
 
-<small>This material is based upon work supported by the National Science Foundation under Grant No. 2231984.</small>
-<small>Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.</small>
+This material is based upon work supported by the National Science Foundation under Grant No. 2231984.
+Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
 
