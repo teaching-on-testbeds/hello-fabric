@@ -24,8 +24,8 @@ conf = fablib.show_config()
 
 ::: {.cell .code}
 ```python
-!chmod 600 /home/fabric/work/fabric_config/fabric_bastion_key
-!chmod 600 /home/fabric/work/fabric_config/slice_key
+!chmod 600 {fablib.get_bastion_key_filename()}
+!chmod 600 {fablib.get_default_slice_private_key_file()}
 ```
 :::
 
