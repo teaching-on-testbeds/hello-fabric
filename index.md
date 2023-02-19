@@ -214,8 +214,8 @@ conf = fablib.show_config()
 ```
 
 ``` python
-!chmod 600 /home/fabric/work/fabric_config/fabric_bastion_key
-!chmod 600 /home/fabric/work/fabric_config/slice_key
+!chmod 600 {fablib.get_bastion_key_filename()}
+!chmod 600 {fablib.get_default_slice_private_key_file()}
 ```
 
 ``` python
@@ -433,3 +433,11 @@ slice.delete()
 ``` python
 slice.show()
 ```
+
+------------------------------------------------------------------------
+
+`<small>`{=html}Questions about this material? Contact Fraida Fund`</small>`{=html}
+
+------------------------------------------------------------------------
+
+`<small>`{=html}This material is based upon work supported by the National Science Foundation under Grant No. 2231984.`</small>`{=html} `<small>`{=html}Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.`</small>`{=html}
