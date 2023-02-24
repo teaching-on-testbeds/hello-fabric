@@ -83,6 +83,6 @@ Finally, we'll install some software. For this experiment, we will need to insta
 ::: {.cell .code}
 ```python
 for n in ['romeo', 'router', 'juliet']:
-    slice.get_node(name=n).execute("sudo apt update; sudo apt -y install net-tools", quite=True)
+    slice.get_node(name=n).execute("sudo apt update; sudo apt -y install net-tools", quiet=True)
 ```
 :::
