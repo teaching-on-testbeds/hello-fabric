@@ -134,6 +134,8 @@ We'll keep all of our FABRIC configuration files at the default locations, speci
 
 ::: {.cell .markdown}
 Now, we'll generate a new "slice key" pair. (This is used on the "hop" from the bastion, to our FABRIC resources.)
+
+Note that this cell will appear to prompt you for a response (whether or not to overwrite the existing key pair), but a response will be sent automatically - you don't have to do anything.
 :::
 
 
