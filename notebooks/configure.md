@@ -32,22 +32,6 @@ for iface in slice.get_interfaces():
 :::
 
 
-::: {.cell .markdown}
-Then, we'll add routes so that romeo knows how to reach juliet, and vice versa.
-:::
-
-
-::: {.cell .code}
-```python
-rt_conf = [
-    {"name": "romeo",   "addr": "10.0.1.0/24", "gw": "10.0.0.1"},
-    {"name": "juliet",  "addr": "10.0.0.0/24", "gw": "10.0.1.1"}
-]
-for rt in rt_conf:
-    slice.get_node(name=rt['name']).ip_route_add(subnet=IPv4Network(rt['addr']), gateway=rt['gw'])
-```
-:::
-
 
 ::: {.cell .markdown}
 And, we'll enable IP forwarding on the router:
@@ -71,6 +55,24 @@ Let's make sure that all of the network interfaces are brought up:
 ```python
 for iface in slice.get_interfaces():
     iface.ip_link_up()
+```
+:::
+
+
+
+::: {.cell .markdown}
+Then, we'll add routes so that romeo knows how to reach juliet, and vice versa.
+:::
+
+
+::: {.cell .code}
+```python
+rt_conf = [
+    {"name": "romeo",   "addr": "10.0.1.0/24", "gw": "10.0.0.1"},
+    {"name": "juliet",  "addr": "10.0.0.0/24", "gw": "10.0.1.1"}
+]
+for rt in rt_conf:
+    slice.get_node(name=rt['name']).ip_route_add(subnet=IPv4Network(rt['addr']), gateway=rt['gw'])
 ```
 :::
 
