@@ -28,7 +28,8 @@ Confirm the new end time of your slice in the output of the following cell:
 
 ::: {.cell .code}
 ```python
-slice.show()
+slice.update()
+_ = slice.show()
 ```
 :::
 

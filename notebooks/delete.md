@@ -18,6 +18,9 @@ slice.delete()
 
 ::: {.cell .code}
 ```python
-slice.show()
+# slice should end up in "Dead" state
+# re-run this cell until you see it in "Dead" state
+slice.update()
+_ = slice.show()
 ```
 :::

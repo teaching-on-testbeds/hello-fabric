@@ -417,7 +417,8 @@ slice.renew(end_date)
 Confirm the new end time of your slice in the output of the following cell:
 
 ``` python
-slice.show()
+slice.update()
+_ = slice.show()
 ```
 
 You can extend your slice again anytime before these 3 days have elapsed, if you need more time.
@@ -433,7 +434,10 @@ slice.delete()
 ```
 
 ``` python
-slice.show()
+# slice should end up in "Dead" state
+# re-run this cell until you see it in "Dead" state
+slice.update()
+_ = slice.show()
 ```
 
 <hr>
