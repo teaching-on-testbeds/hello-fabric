@@ -436,9 +436,11 @@ In the Jupyter environment, click on the folder icon in the file browser on the 
 
 Then, you should see the `ping.txt` file appear in the Jupyter file browser on the left. You can now download this file from the Jupyter environment to your own laptop.
 
-## Extend your slice
+## Modify your slice lifetime
 
 By default, your resources will be reserved for you for one day - then, they will be deleted automatically to free them for other users.
+
+### Extend your slice
 
 If you don't plan to finish an experiment in one day, you can extend your slice. The following cell extends your reservation for 3 days.
 
