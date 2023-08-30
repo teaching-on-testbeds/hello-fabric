@@ -1,139 +1,17 @@
 
 ::: {.cell .markdown}
-### Exercise: reserve resources
+## Reserve resources
 
-In this exercise, we will reserve resources on FABRIC: two hosts on two different network segments, connected by a router.
+In this exercise, we will reserve and use resources on FABRIC: two hosts on two different network segments, connected by a router. (Both the hosts and the router will be realized as Linux virtual machines.)
+
+This involves several steps - 
+
+* **Configure environment**: Now that you have configured your Jupyter environment on FABRIC, you can load it from the configuration file at the beginning of each experiment! Check the output of the following cell, and make sure it reflects your configuration (e.g. correct bastion hostname, etc.).
+* **Define configuration for this experiment**: Next, you will define the configuration of the experiment, with all of the properties of the virtual machines, network interfaces, and networks that you will request from the FABRIC infrastructure. 
+* **Reserve resources**: At this stage, you are ready to reserve resources! You will construct a "slice" following the configuration you defined, and then submit it to FABRIC to build out on the physical infrastructure.
+* **Configure resources**: Also following the configuration you defined, you will configure network interfaces on the resources, install software, or do other configuration tasks that are necessary for your experiment.
+* **Draw the network topology**: We can visualize the network topology, including the names, MAC addresses, and IP addresses of each network interface, directly in this notebook.
+* **Log in to resources**: Finally, you will get the SSH login details for each of the nodes in your topology.
+
 
 :::
-
-::: {.cell .markdown}
-
-
-Now that you have configured your Jupyter environment on FABRIC, you can load it from the configuration file at the beginning of each experiment! Check the output of the following cell, and make sure it reflects your configuration (e.g. correct bastion hostname, etc.).
-:::
-
-
-::: {.cell .code}
-```python
-from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manager
-fablib = fablib_manager() 
-conf = fablib.show_config()
-```
-:::
-
-
-::: {.cell .code}
-```python
-!chmod 600 {fablib.get_bastion_key_filename()}
-!chmod 600 {fablib.get_default_slice_private_key_file()}
-```
-:::
-
-
-::: {.cell .code}
-```python
-import os
-slice_name="hello-fabric_" + os.getenv('NB_USER')
-```
-:::
-
-
-
-::: {.cell .code}
-```python
-try:
-    slice = fablib.get_slice(slice_name)
-    print("You already have a slice by this name!")
-    print("If you previously reserved resources, skip to the 'log in to resources' section.")
-except:
-    print("You don't have a slice named %s yet." % slice_name)
-    print("Continue to the next step to make one.")
-    slice = fablib.new_slice(name=slice_name)
-```
-:::
-
-
-
-::: {.cell .markdown}
-Next, we'll select a random FABRIC site for our experiment. We'll make sure to get one that has sufficient capacity for the experiment we're going to run.
-
-Once we find a suitable site, we'll print details about available resources at this site.
-:::
-
-
-
-::: {.cell .code}
-```python
-exp_requires = {'core': 3*2, 'nic': 4}
-while True:
-    site_name = fablib.get_random_site()
-    if ( (fablib.resources.get_core_available(site_name) > 1.2*exp_requires['core']) and
-        (fablib.resources.get_component_available(site_name, 'SharedNIC-ConnectX-6') > 1.2**exp_requires['nic']) ):
-        break
-
-fablib.show_site(site_name)
-```
-:::
-
-
-::: {.cell .markdown}
-Next, we'll request the hosts and network links that we need at that site! For this experiment, we will need three virtual machines connected by two Ethernet links in a line topology, so we'll add that to our slice.
-:::
-
-
-
-
-::: {.cell .code}
-```python
-# this cell sets up the hosts and router
-node_names = ["romeo", "router", "juliet"]
-for n in node_names:
-    slice.add_node(name=n, site=site_name, cores=2, ram=4, disk=10, image='default_ubuntu_20')
-```
-:::
-
-
-
-::: {.cell .code}
-```python
-# this cell sets up the network links
-nets = [
-    {"name": "net0",   "nodes": ["romeo", "router"]},
-    {"name": "net1",  "nodes": ["router", "juliet"]}
-]
-for n in nets:
-    ifaces = [slice.get_node(node).add_component(model="NIC_Basic", name=n["name"]).get_interfaces()[0] for node in n['nodes'] ]
-    slice.add_l2network(name=n["name"], type='L2Bridge', interfaces=ifaces)
-```
-:::
-
-
-
-::: {.cell .markdown}
-The following cell submits our request to the FABRIC site. The output of this cell will update automatically as the status of our request changes. 
-
-* While it is being prepared, the "State" of the slice will appear as "Configuring". 
-* When it is ready, the "State" of the slice will change to "StableOK".
-:::
-
-
-
-::: {.cell .code}
-```python
-slice.submit()
-```
-:::
-
-
-
-::: {.cell .markdown}
-Even after the slice is fully configured, it may not be immediately ready for us to log in. The following cell will return when the hosts in the slice are ready for us to use.
-:::
-
-
-::: {.cell .code}
-```python
-slice.wait_ssh(progress=True)
-```
-:::
-

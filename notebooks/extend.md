@@ -1,6 +1,6 @@
 
 ::: {.cell .markdown}
-### Exercise: Extend your slice
+## Extend your slice
 
 By default, your resources will be reserved for you for one day - then, they will be deleted automatically to free them for other users.
 

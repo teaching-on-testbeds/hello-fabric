@@ -12,9 +12,7 @@ Before you can run lab experiments on FABRIC, you will need to set up an account
 
 ## Set up your account on FABRIC
 
-Now that you have the software you need, you are ready to set up an account on FABRIC.
-
-### Exercise - Create an account
+### Create an account
 
 
 First, go to [https://portal.fabric-testbed.net/](https://portal.fabric-testbed.net/). If it is your first time visiting this website, click "OK" on the bottom to accept cookies from this website. Then, click the "Sign Up" button in the top right corner.
@@ -39,13 +37,13 @@ To continue, you'll need to click "Accept":
 
 !["Accept" to continue setting up your account.](images/fabric-accept.png)
 
-### Exercise - Join a project
+### Join a project
 
 At this stage, you have an account on FABRIC, but your account is not yet a part of any project. To use FABRIC, you need to be a part of a project that has been approved by the FABRIC staff, under the supervision of a project lead who supervises your use of FABRIC.
 
 If you click on the "Projects" tab in the FABRIC portal dashboard (while logged in to your FABRIC account), you'll see a list of projects that you belong to. For now, you won't be part of any project! You will need to let your instructor or research advisor know that you have created your FABRIC account, and tell them the email address associated with your FABRIC account. Once they have added you to their project, you'll see it listed on that page, and you can continue with the next step.
 
-### Exercise - Open this notebook in Jupyter
+### Open this notebook in Jupyter
 
 Once you are part of a FABRIC project, you can reserve resources on FABRIC and access them over SSH! We'll use FABRIC's Jupyter environment for this.
 

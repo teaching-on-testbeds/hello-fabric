@@ -1,5 +1,5 @@
 ::: {.cell .markdown}
-### Exercise: Configure your Jupyter environment
+### Configure your Jupyter environment
 
 You should now be inside the Jupyter environment in FABRIC. Before you use this environment for the first time, you'll want to create some configuration files that tell it who you are, what project you belong to, and what key it should use to access your resource on FABRIC.
 
@@ -195,7 +195,6 @@ export FABRIC_SSH_COMMAND_LINE="ssh -i {{ _self_.private_ssh_key_file }} -F ${HO
 EOF
 ```
 :::
-
 
 
 ::: {.cell .markdown}

@@ -1,7 +1,7 @@
 
 
 ::: {.cell .markdown}
-### Exercise: Transfer files from a FABRIC host
+## Transfer files from a FABRIC host
 
 In future experiments, we'll often want to save the results of an experiment to a file on a FABRIC host, then transfer it to our own laptop for further inspection and analysis. In this exercise, we will learn how to do that!
 

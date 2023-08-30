@@ -10,9 +10,7 @@ Before you can run lab experiments on FABRIC, you will need to set up an account
 
 ## Set up your account on FABRIC
 
-Now that you have the software you need, you are ready to set up an account on FABRIC.
-
-### Exercise - Create an account
+### Create an account
 
 First, go to <https://portal.fabric-testbed.net/>. If it is your first time visiting this website, click "OK" on the bottom to accept cookies from this website. Then, click the "Sign Up" button in the top right corner.
 
@@ -36,13 +34,13 @@ To continue, you'll need to click "Accept":
 
 !["Accept" to continue setting up your account.](images/fabric-accept.png)
 
-### Exercise - Join a project
+### Join a project
 
 At this stage, you have an account on FABRIC, but your account is not yet a part of any project. To use FABRIC, you need to be a part of a project that has been approved by the FABRIC staff, under the supervision of a project lead who supervises your use of FABRIC.
 
 If you click on the "Projects" tab in the FABRIC portal dashboard (while logged in to your FABRIC account), you'll see a list of projects that you belong to. For now, you won't be part of any project! You will need to let your instructor or research advisor know that you have created your FABRIC account, and tell them the email address associated with your FABRIC account. Once they have added you to their project, you'll see it listed on that page, and you can continue with the next step.
 
-### Exercise - Open this notebook in Jupyter
+### Open this notebook in Jupyter
 
 Once you are part of a FABRIC project, you can reserve resources on FABRIC and access them over SSH! We'll use FABRIC's Jupyter environment for this.
 
@@ -60,7 +58,7 @@ If you are prompted about a choice of kernel, you can accept the Python3 kernel.
 
 Then, you can continue this tutorial by executing the cells in the notebook directly in this Jupyter environment.
 
-### Exercise: Configure your Jupyter environment
+### Configure your Jupyter environment
 
 You should now be inside the Jupyter environment in FABRIC. Before you use this environment for the first time, you'll want to create some configuration files that tell it who you are, what project you belong to, and what key it should use to access your resource on FABRIC.
 
@@ -203,11 +201,20 @@ Host * !bastion.fabric-testbed.net
 EOF
 ```
 
-### Exercise: reserve resources
+## Reserve resources
 
-In this exercise, we will reserve resources on FABRIC: two hosts on two different network segments, connected by a router.
+In this exercise, we will reserve and use resources on FABRIC: two hosts on two different network segments, connected by a router. (Both the hosts and the router will be realized as Linux virtual machines.)
 
-Now that you have configured your Jupyter environment on FABRIC, you can load it from the configuration file at the beginning of each experiment! Check the output of the following cell, and make sure it reflects your configuration (e.g. correct bastion hostname, etc.).
+This involves several steps -
+
+-   **Configure environment**: Now that you have configured your Jupyter environment on FABRIC, you can load it from the configuration file at the beginning of each experiment! Check the output of the following cell, and make sure it reflects your configuration (e.g. correct bastion hostname, etc.).
+-   **Define configuration for this experiment**: Next, you will define the configuration of the experiment, with all of the properties of the virtual machines, network interfaces, and networks that you will request from the FABRIC infrastructure.
+-   **Reserve resources**: At this stage, you are ready to reserve resources! You will construct a "slice" following the configuration you defined, and then submit it to FABRIC to build out on the physical infrastructure.
+-   **Configure resources**: Also following the configuration you defined, you will configure network interfaces on the resources, install software, or do other configuration tasks that are necessary for your experiment.
+-   **Draw the network topology**: We can visualize the network topology, including the names, MAC addresses, and IP addresses of each network interface, directly in this notebook.
+-   **Log in to resources**: Finally, you will get the SSH login details for each of the nodes in your topology.
+
+### Configure environment
 
 ``` python
 from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manager
@@ -215,15 +222,32 @@ fablib = fablib_manager()
 conf = fablib.show_config()
 ```
 
-``` python
-!chmod 600 {fablib.get_bastion_key_filename()}
-!chmod 600 {fablib.get_default_slice_private_key_file()}
-```
+### Define configuration for this experiment
 
 ``` python
-import os
-slice_name="hello-fabric_" + os.getenv('NB_USER')
+slice_name="hello-fabric_" + fablib.get_bastion_username()
+
+node_conf = [
+ {'name': "romeo",   'cores': 2, 'ram': 4, 'disk': 10, 'image': 'default_ubuntu_22', 'packages': ['net-tools']}, 
+ {'name': "juliet",  'cores': 2, 'ram': 4, 'disk': 10, 'image': 'default_ubuntu_22', 'packages': ['net-tools']}, 
+ {'name': "router",  'cores': 2, 'ram': 4, 'disk': 10, 'image': 'default_ubuntu_22', 'packages': ['net-tools']}
+]
+net_conf = [
+ {"name": "net0", "subnet": "10.0.0.0/24", "nodes": [{"name": "romeo",   "addr": "10.0.0.2"}, {"name": "router", "addr": "10.0.0.1"}]},
+ {"name": "net1", "subnet": "10.0.1.0/24", "nodes": [{"name": "juliet",   "addr": "10.0.1.2"}, {"name": "router", "addr": "10.0.1.1"}]}
+]
+route_conf = [
+ {"addr": "10.0.1.0/24", "gw": "10.0.0.1", "nodes": ["romeo"]}, 
+ {"addr": "10.0.0.0/24", "gw": "10.0.1.1", "nodes": ["juliet"]}
+]
+exp_conf = {'cores': sum([ n['cores'] for n in node_conf]), 'nic': sum([len(n['nodes']) for n in net_conf]) }
 ```
+
+### Reserve resources
+
+Now, we are ready to reserve resources!
+
+First, make sure you don't already have a slice with this name:
 
 ``` python
 try:
@@ -236,38 +260,35 @@ except:
     slice = fablib.new_slice(name=slice_name)
 ```
 
-Next, we'll select a random FABRIC site for our experiment. We'll make sure to get one that has sufficient capacity for the experiment we're going to run.
-
-Once we find a suitable site, we'll print details about available resources at this site.
+We will select a random site that has sufficient resources for our experiment:
 
 ``` python
-exp_requires = {'core': 3*2, 'nic': 4}
 while True:
     site_name = fablib.get_random_site()
-    if ( (fablib.resources.get_core_available(site_name) > 1.2*exp_requires['core']) and
-        (fablib.resources.get_component_available(site_name, 'SharedNIC-ConnectX-6') > 1.2**exp_requires['nic']) ):
+    if ( (fablib.resources.get_core_available(site_name) > 1.2*exp_conf['cores']) and
+        (fablib.resources.get_component_available(site_name, 'SharedNIC-ConnectX-6') > 1.2**exp_conf['nic']) ):
         break
 
 fablib.show_site(site_name)
 ```
 
-Next, we'll request the hosts and network links that we need at that site! For this experiment, we will need three virtual machines connected by two Ethernet links in a line topology, so we'll add that to our slice.
+Then we will add hosts and network segments:
 
 ``` python
-# this cell sets up the hosts and router
-node_names = ["romeo", "router", "juliet"]
-for n in node_names:
-    slice.add_node(name=n, site=site_name, cores=2, ram=4, disk=10, image='default_ubuntu_20')
+# this cell sets up the nodes
+for n in node_conf:
+    slice.add_node(name=n['name'], site=site_name, 
+                   cores=n['cores'], 
+                   ram=n['ram'], 
+                   disk=n['disk'], 
+                   image=n['image'])
 ```
 
 ``` python
-# this cell sets up the network links
-nets = [
-    {"name": "net0",   "nodes": ["romeo", "router"]},
-    {"name": "net1",  "nodes": ["router", "juliet"]}
-]
-for n in nets:
-    ifaces = [slice.get_node(node).add_component(model="NIC_Basic", name=n["name"]).get_interfaces()[0] for node in n['nodes'] ]
+# this cell sets up the network segments
+for n in net_conf:
+    ifaces = [slice.get_node(node["name"]).add_component(model="NIC_Basic", 
+                                                 name=n["name"]).get_interfaces()[0] for node in n['nodes'] ]
     slice.add_l2network(name=n["name"], type='L2Bridge', interfaces=ifaces)
 ```
 
@@ -276,104 +297,121 @@ The following cell submits our request to the FABRIC site. The output of this ce
 -   While it is being prepared, the "State" of the slice will appear as "Configuring".
 -   When it is ready, the "State" of the slice will change to "StableOK".
 
+You may prefer to walk away and come back in a few minutes (for simple slices) or a few tens of minutes (for more complicated slices with many resources).
+
 ``` python
 slice.submit()
 ```
 
-Even after the slice is fully configured, it may not be immediately ready for us to log in. The following cell will return when the hosts in the slice are ready for us to use.
-
 ``` python
+slice.get_state()
 slice.wait_ssh(progress=True)
 ```
 
-### Exercise: Configure resources
+### Configure resources
 
-Next, we need to configure our resources - assign IP addresses to network interfaces, enable forwarding on the router, and install any necessary software.
-
-First, we'll configure IP addresses:
+Next, we will configure the resources so they are ready to use.
 
 ``` python
+slice = fablib.get_slice(name=slice_name)
+```
+
+``` python
+# install packages
+# this will take a while and will run in background while you do other steps
+for n in node_conf:
+    if len(n['packages']):
+        node = slice.get_node(n['name'])
+        pkg = " ".join(n['packages'])
+        node.execute_thread("sudo apt update; sudo apt -y install %s" % pkg)
+```
+
+``` python
+# bring interfaces up and either assign an address (if there is one) or flush address
 from ipaddress import ip_address, IPv4Address, IPv4Network
 
-if_conf = {
-    "romeo-net0-p1":   {"addr": "10.0.0.2", "subnet": "10.0.0.0/24"},
-    "router-net0-p1":  {"addr": "10.0.0.1", "subnet": "10.0.0.0/24"},
-    "router-net1-p1":  {"addr": "10.0.1.1", "subnet": "10.0.1.0/24"},
-    "juliet-net1-p1":  {"addr": "10.0.1.2", "subnet": "10.0.1.0/24"}
-}
-
-for iface in slice.get_interfaces():
-    if_name = iface.get_name()
-    iface.ip_addr_add(addr=if_conf[if_name]['addr'], subnet=IPv4Network(if_conf[if_name]['subnet']))
+for net in net_conf:
+    for n in net['nodes']:
+        if_name = n['name'] + '-' + net['name'] + '-p1'
+        iface = slice.get_interface(if_name)
+        iface.ip_link_up()
+        if n['addr']:
+            iface.ip_addr_add(addr=n['addr'], subnet=IPv4Network(net['subnet']))
+        else:
+            iface.get_node().execute("sudo ip addr flush dev %s"  % iface.get_device_name())
 ```
-
-And, we'll enable IP forwarding on the router:
 
 ``` python
-for n in ['router']:
-    slice.get_node(name=n).execute("sudo sysctl -w net.ipv4.ip_forward=1")
+# prepare a "hosts" file that has names and addresses of every node
+hosts_txt = [ "%s\t%s" % ( n['addr'], n['name'] ) for net in net_conf  for n in net['nodes'] if type(n) is dict and n['addr']]
+for n in slice.get_nodes():
+    for h in hosts_txt:
+        n.execute("echo %s | sudo tee -a /etc/hosts" % h)
 ```
-
-Let's make sure that all of the network interfaces are brought up:
 
 ``` python
-for iface in slice.get_interfaces():
-    iface.ip_link_up()
+# enable IPv4 forwarding on all nodes
+for n in slice.get_nodes():
+    n.execute("sudo sysctl -w net.ipv4.ip_forward=1")
 ```
-
-Then, we'll add routes so that romeo knows how to reach juliet, and vice versa.
 
 ``` python
-rt_conf = [
-    {"name": "romeo",   "addr": "10.0.1.0/24", "gw": "10.0.0.1"},
-    {"name": "juliet",  "addr": "10.0.0.0/24", "gw": "10.0.1.1"}
-]
-for rt in rt_conf:
-    slice.get_node(name=rt['name']).ip_route_add(subnet=IPv4Network(rt['addr']), gateway=rt['gw'])
+# set up static routes
+for rt in route_conf:
+    for n in rt['nodes']:
+        slice.get_node(name=n).ip_route_add(subnet=IPv4Network(rt['addr']), gateway=rt['gw'])
 ```
 
-Finally, we'll install some software. For this experiment, we will need to install the `net-tools` package (which provides the `ifconfig` command).
+### Draw the network topology
+
+The following cell will draw the network topology, for your reference. The interface name and addresses of each experiment interface will be shown on the drawing.
 
 ``` python
-for n in ['romeo', 'router', 'juliet']:
-    slice.get_node(name=n).execute("sudo apt update; sudo apt -y install net-tools", quiet=True)
+l2_nets = [(n.get_name(), {'color': 'lavender'}) for n in slice.get_l2networks() ]
+l3_nets = [(n.get_name(), {'color': 'pink'}) for n in slice.get_l3networks() ]
+hosts   =   [(n.get_name(), {'color': 'lightblue'}) for n in slice.get_nodes()]
+nodes = l2_nets + l3_nets + hosts
+ifaces = [iface.toDict() for iface in slice.get_interfaces()]
+edges = [(iface['network'], iface['node'], 
+          {'label': iface['physical_dev'] + '\n' + iface['ip_addr'] + '\n' + iface['mac']}) for iface in ifaces]
 ```
 
-### Exercise: Log in to resources
+``` python
+import networkx as nx
+import matplotlib.pyplot as plt
+plt.figure(figsize=(len(nodes),len(nodes)))
+G = nx.Graph()
+G.add_nodes_from(nodes)
+G.add_edges_from(edges)
+pos = nx.spring_layout(G)
+nx.draw(G, pos, node_shape='s',  
+        node_color=[n[1]['color'] for n in nodes], 
+        node_size=[len(n[0])*400 for n in nodes],  
+        with_labels=True);
+nx.draw_networkx_edge_labels(G,pos,
+                             edge_labels=nx.get_edge_attributes(G,'label'),
+                             font_color='gray',  font_size=8, rotate=False);
+```
 
-Now, we are finally ready to log in to our resources over SSH! Run the following cells, and observe the table output - you will see an SSH command for each of the nodes in your topology.
+### Log into resources
+
+Now, we are finally ready to log in to our resources over SSH! Run the following cells, and observe the table output - you will see an SSH command for each of the resources in your topology.
 
 ``` python
 import pandas as pd
 pd.set_option('display.max_colwidth', None)
-ssh_str = 'ssh -i ' + slice.get_slice_private_key_file() + \
-    ' -J ' + fablib.get_bastion_username() + '@' + fablib.get_bastion_public_addr() + \
-    ' -F /home/fabric/work/fabric_config/ssh_config '
-slice_info = [{'Name': n.get_name(), 'SSH command': ssh_str + n.get_username() + '@' + str(n.get_management_ip())} for n in slice.get_nodes()]
+slice_info = [{'Name': n.get_name(), 'SSH command': n.get_ssh_command()} for n in slice.get_nodes()]
 pd.DataFrame(slice_info).set_index('Name')
 ```
 
-Now, you can open an SSH session on any of the nodes as follows:
+Now, you can open an SSH session on any of the resources as follows:
 
 -   in Jupyter, from the menu bar, use File \> New \> Terminal to open a new terminal.
 -   copy an SSH command from the table, and paste it into the terminal. (Note that each SSH command is a single line, even if the display wraps the text to a second line! When you copy and paste it, paste it all together.)
 
-You can repeat this process (open several terminals) to start a session on each host and the router. Each terminal session will have a tab in the Jupyter environment, so that you can easily switch between them.
+You can repeat this process (open several terminals) to start a session on each resource. Each terminal session will have a tab in the Jupyter environment, so that you can easily switch between them.
 
-Try typing
-
-    echo "Hello from:"
-    hostname
-
-in the terminal shell *on one of your FABRIC hosts*, and observe the output.
-
-Note that you can also use the FABRIC library to directly execute commands on the FABRIC hosts, like this:
-
-``` python
-slice.get_node("romeo").execute("echo 'Hello from:'; hostname")
-```
-
-### Exercise: Transfer files from a FABRIC host
+## Transfer files from a FABRIC host
 
 In future experiments, we'll often want to save the results of an experiment to a file on a FABRIC host, then transfer it to our own laptop for further inspection and analysis. In this exercise, we will learn how to do that!
 
@@ -398,7 +436,7 @@ In the Jupyter environment, click on the folder icon in the file browser on the 
 
 Then, you should see the `ping.txt` file appear in the Jupyter file browser on the left. You can now download this file from the Jupyter environment to your own laptop.
 
-### Exercise: Extend your slice
+## Extend your slice
 
 By default, your resources will be reserved for you for one day - then, they will be deleted automatically to free them for other users.
 
@@ -423,14 +461,13 @@ _ = slice.show()
 
 You can extend your slice again anytime before these 3 days have elapsed, if you need more time.
 
-### Exercise: Delete your slice resources
+### Delete your slice
 
-By default, your resources will be reserved for you for one day - then, they will be deleted automatically to free them for other users.
-
-If you finish your experiment early, you can delete your slice! The following cell deletes all the resources in your slice, freeing them for other experimenters.
+When you finish your experiment, you should delete your slice! The following cells deletes all the resources in your slice, freeing them for other experimenters.
 
 ``` python
-slice.delete()
+slice = fablib.get_slice(name=slice_name)
+fablib.delete_slice(slice_name)
 ```
 
 ``` python
