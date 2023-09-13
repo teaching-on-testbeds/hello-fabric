@@ -48,11 +48,11 @@ First, we will use the FABRIC Portal to generate the bastion key. In the [FABRIC
 
 ::: {.cell .markdown}
 
-Scroll down to the "Generate SSH Key Pair" section. Set the "Name" to `fabric_bastion_key` and the "Key Type" to **bastion**, exactly as shown here. You can write anything you want in the "Description" field.
+Click on the "Bastion" tab, then scroll down to the "Generate Bastion Key Pair" section. Set the "Name" to `fabric_bastion_key`, exactly as shown here. You can write anything you want in the "Description" field.
 
 ![](images/fabric-gen-bastion.png)
 
-Then, click "Generate Key Pair".
+Then, click "Generate".
 
 :::
 
