@@ -9,7 +9,7 @@ index.md: prepare.md footer.md notebooks/*.md
 		notebooks/reserve.md  \
 		fabric-snippets/fab-config.md \
 		notebooks/define-config.md \
-		fabric-snippets/reserve-resources.md \
+		fabric-snippets/reserve-resources-eduky.md \
 		fabric-snippets/configure-resources.md \
 		fabric-snippets/draw-topo-detailed-labels.md \
 		fabric-snippets/log-in.md \
@@ -20,14 +20,13 @@ index.md: prepare.md footer.md notebooks/*.md
 	rm index.tmp.md
 	cat footer.md >> index.md
 
-
 hello_fabric.ipynb: notebooks/*.md fabric-snippets/*.md
 	pandoc --resource-path=../ --embed-resources --standalone --wrap=none \
 		-i notebooks/title.md notebooks/configure_jupyter.md \
 		notebooks/reserve.md  \
 		fabric-snippets/fab-config.md \
 		notebooks/define-config.md \
-		fabric-snippets/reserve-resources.md \
+		fabric-snippets/reserve-resources-eduky.md \
 		fabric-snippets/configure-resources.md \
 		fabric-snippets/draw-topo-detailed-labels.md \
 		fabric-snippets/log-in.md \

@@ -260,15 +260,10 @@ except:
     slice = fablib.new_slice(name=slice_name)
 ```
 
-We will select a random site that has sufficient resources for our experiment:
+We will reserve resources for our experiment at the EDUKY site:
 
 ``` python
-while True:
-    site_name = fablib.get_random_site()
-    if ( (fablib.resources.get_core_available(site_name) > 1.2*exp_conf['cores']) and
-        (fablib.resources.get_component_available(site_name, 'SharedNIC-ConnectX-6') > 1.2**exp_conf['nic']) ):
-        break
-
+site_name = 'EDUKY'
 fablib.show_site(site_name)
 ```
 
@@ -323,7 +318,7 @@ for n in node_conf:
     if len(n['packages']):
         node = slice.get_node(n['name'])
         pkg = " ".join(n['packages'])
-        node.execute_thread("sudo apt update; sudo apt -y install %s" % pkg)
+        node.execute_thread("sudo apt update; sudo DEBIAN_FRONTEND=noninteractive apt -y install %s" % pkg)
 ```
 
 ``` python
@@ -339,6 +334,12 @@ for net in net_conf:
             iface.ip_addr_add(addr=n['addr'], subnet=IPv4Network(net['subnet']))
         else:
             iface.get_node().execute("sudo ip addr flush dev %s"  % iface.get_device_name())
+```
+
+``` python
+# make sure all interfaces are brought up
+for iface in slice.get_interfaces():
+    iface.ip_link_up()
 ```
 
 ``` python
