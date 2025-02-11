@@ -47,7 +47,7 @@ If you click on the "Projects" tab in the FABRIC portal dashboard (while logged 
 
 Once you are part of a FABRIC project, you can reserve resources on FABRIC and access them over SSH! We'll use FABRIC's Jupyter environment for this.
 
-Log on to the [FABRIC Portal](https://portal.fabric-testbed.net/), then click on the "JupyterHub" menu option. You may be prompted to log in again.
+Log on to the [FABRIC Portal](https://portal.fabric-testbed.net/), then click on the "JupyterHub" menu option. You may be prompted to log in again. You may have to select which version of the FABRIC JupyterHub you want to launch, and you can select the default version.
 
 To continue working on this tutorial, you'll want to get the rest in "notebook" form.
 

@@ -94,7 +94,7 @@ You're almost ready to finish configuring your Jupyter environment now! But firs
 
 ![](images/fabric-bastion-username.png)
 
-**Your project ID**: In the FABRIC Portal, click on "User Profile" and then "My Roles and Projects". Scroll down and find the "Project ID", then copy it. 
+**Your project ID**: In the FABRIC Portal, click on "User Profile" and then "My Roles and Projects". Select your project, then scroll down and find the "Project ID", then copy it. 
 
 ![](images/fab-project-id.png)
 

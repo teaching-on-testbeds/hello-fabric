@@ -44,7 +44,7 @@ If you click on the "Projects" tab in the FABRIC portal dashboard (while logged 
 
 Once you are part of a FABRIC project, you can reserve resources on FABRIC and access them over SSH! We'll use FABRIC's Jupyter environment for this.
 
-Log on to the [FABRIC Portal](https://portal.fabric-testbed.net/), then click on the "JupyterHub" menu option. You may be prompted to log in again.
+Log on to the [FABRIC Portal](https://portal.fabric-testbed.net/), then click on the "JupyterHub" menu option. You may be prompted to log in again. You may have to select which version of the FABRIC JupyterHub you want to launch, and you can select the default version.
 
 To continue working on this tutorial, you'll want to get the rest in "notebook" form.
 
@@ -111,7 +111,7 @@ You're almost ready to finish configuring your Jupyter environment now! But firs
 
 ![](images/fabric-bastion-username.png)
 
-**Your project ID**: In the FABRIC Portal, click on "User Profile" and then "My Roles and Projects". Scroll down and find the "Project ID", then copy it.
+**Your project ID**: In the FABRIC Portal, click on "User Profile" and then "My Roles and Projects". Select your project, then scroll down and find the "Project ID", then copy it.
 
 ![](images/fab-project-id.png)
 
@@ -209,7 +209,7 @@ This involves several steps -
 
 -   **Configure environment**: Now that you have configured your Jupyter environment on FABRIC, you can load it from the configuration file at the beginning of each experiment! Check the output of the following cell, and make sure it reflects your configuration (e.g. correct bastion hostname, etc.).
 -   **Define configuration for this experiment**: Next, you will define the configuration of the experiment, with all of the properties of the virtual machines, network interfaces, and networks that you will request from the FABRIC infrastructure.
--   **Reserve resources**: At this stage, you are ready to reserve resources! You will construct a "slice" following the configuration you defined, and then submit it to FABRIC to build out on the physical infrastructure.
+-   **Reserve resources**: At this stage, you are ready to reserve resources! You will construct a "slice" following the configuration you defined, and then submit it to FABRIC to build out on the physical infrastructure. (This may take some time.)
 -   **Configure resources**: Also following the configuration you defined, you will configure network interfaces on the resources, install software, or do other configuration tasks that are necessary for your experiment.
 -   **Draw the network topology**: We can visualize the network topology, including the names, MAC addresses, and IP addresses of each network interface, directly in this notebook.
 -   **Log in to resources**: Finally, you will get the SSH login details for each of the nodes in your topology.
